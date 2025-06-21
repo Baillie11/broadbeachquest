@@ -10,6 +10,48 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
 // Get user's first name from the session to personalize the page
 $firstName = $_SESSION['user_first_name'] ?? 'User';
+$userId = $_SESSION['user_id'] ?? 0;
+
+// --- Database Connection ---
+$servername = "localhost";
+$username = "ozbizfin_questuser";
+$password = "yGwPwjOMziXO6L";
+$dbname = "ozbizfin_puzzlepath";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch user's medals
+$stmt = $conn->prepare("SELECT medals FROM users WHERE id = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+// Parse medals (assuming they're stored as comma-separated values)
+$medals = [];
+if ($user && $user['medals']) {
+    $medals = explode(',', $user['medals']);
+    $medals = array_map('trim', $medals); // Remove any whitespace
+}
+
+$stmt->close();
+$conn->close();
+
+// Medal data - you can expand this with more medals
+$medalData = [
+    'broadbeach-quest' => [
+        'name' => 'Broadbeach Quest',
+        'description' => 'Completed the Broadbeach puzzle quest',
+        'image' => 'Broadbeach Medal.png'
+    ]
+    // Add more medals here as they become available
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,8 +125,83 @@ $firstName = $_SESSION['user_first_name'] ?? 'User';
             margin-top: 0;
         }
 
-        /* Styles will go here for medals and leaderboard */
+        /* Medal Styles */
+        .medals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5em;
+            margin-top: 1.5em;
+        }
+        .medal-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5em;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .medal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: #fc5c7d;
+        }
+        .medal-card.earned {
+            background: linear-gradient(145deg, #fff3cd 0%, #ffeaa7 100%);
+            border-color: #ffc107;
+        }
+        .medal-card.earned::before {
+            content: '🏆';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+        }
+        .medal-image {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1em;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+        .medal-card.earned .medal-image {
+            background: linear-gradient(145deg, #ffd700 0%, #ffed4e 100%);
+        }
+        .medal-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 0.5em;
+            color: #333;
+        }
+        .medal-description {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+        .no-medals {
+            text-align: center;
+            padding: 2em;
+            color: #666;
+        }
+        .no-medals img {
+            width: 100px;
+            opacity: 0.3;
+            margin-bottom: 1em;
+        }
 
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .medals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -105,8 +222,30 @@ $firstName = $_SESSION['user_first_name'] ?? 'User';
         <div class="content-grid">
             <div class="main-content">
                 <h2>Your Medals</h2>
-                <!-- Medal display will go here -->
-                <p>Your earned medals will appear here soon!</p>
+                <?php if (empty($medals)): ?>
+                    <div class="no-medals">
+                        <img src="puzzlepath-logo-web.png" alt="No medals yet">
+                        <h3>No medals yet!</h3>
+                        <p>Complete quests to earn your first medal.</p>
+                        <a href="index.html" style="display: inline-block; background: #fc5c7d; color: white; padding: 0.8em 1.5em; text-decoration: none; border-radius: 8px; margin-top: 1em;">Start a Quest</a>
+                    </div>
+                <?php else: ?>
+                    <div class="medals-grid">
+                        <?php foreach ($medalData as $medalKey => $medal): ?>
+                            <div class="medal-card <?php echo in_array($medalKey, $medals) ? 'earned' : ''; ?>">
+                                <div class="medal-image">
+                                    <?php if (in_array($medalKey, $medals) && isset($medal['image'])): ?>
+                                        <img src="<?php echo htmlspecialchars($medal['image']); ?>" alt="<?php echo htmlspecialchars($medal['name']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                    <?php else: ?>
+                                        🏅
+                                    <?php endif; ?>
+                                </div>
+                                <div class="medal-name"><?php echo htmlspecialchars($medal['name']); ?></div>
+                                <div class="medal-description"><?php echo htmlspecialchars($medal['description']); ?></div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="sidebar">
                 <h2>Leaderboard</h2>
