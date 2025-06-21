@@ -620,8 +620,8 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        // Login successful - redirect to medal page
-                        window.location.href = 'medal.html';
+                        // Login successful - redirect to dashboard page
+                        window.location.href = 'dashboard.php';
                     } else {
                         // Show error message
                         showFlashMessage(result.message || 'Login failed. Please check your credentials.', 'error');
