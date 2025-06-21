@@ -78,6 +78,9 @@ $medalData = [
             font-weight: bold;
             font-size: 1.5em;
             color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
         }
         .header-bar .logo img {
             max-height: 40px;
@@ -285,10 +288,10 @@ $medalData = [
 </head>
 <body>
     <div class="header-bar">
-        <div class="logo">
+        <a href="https://www.puzzlepath.com.au" target="_blank" rel="noopener" class="logo">
             <img src="puzzlepath-logo-web.png" alt="Puzzle Path Logo">
             Puzzle Path
-        </div>
+        </a>
         <a href="logout.php">Logout</a>
     </div>
 
@@ -364,7 +367,6 @@ $medalData = [
                                 <div class="rank ${rankClass}">#${rank}</div>
                                 <div class="user-name">
                                     ${user.name}
-                                    <div class="completion-date">${user.date}</div>
                                 </div>
                                 <div class="completion-time">${user.time}</div>
                             </div>

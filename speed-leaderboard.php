@@ -30,8 +30,7 @@ $query = "
         first_name,
         last_name,
         total_time_ms,
-        formatted_time,
-        DATE(created_at) as completion_date
+        formatted_time
     FROM users 
     WHERE medals LIKE '%broadbeach-quest%' 
     AND total_time_ms > 0
@@ -47,8 +46,7 @@ if ($result) {
         $leaderboard[] = [
             'name' => $row['first_name'] . ' ' . substr($row['last_name'], 0, 1) . '.', // Show first name and last initial
             'time' => $row['formatted_time'],
-            'time_ms' => (int)$row['total_time_ms'],
-            'date' => $row['completion_date']
+            'time_ms' => (int)$row['total_time_ms']
         ];
     }
 }
