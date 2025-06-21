@@ -40,9 +40,6 @@ try {
         throw new Exception("Password is required.");
     }
 
-    // --- Securely Hash the Password ---
-    $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-
     // --- Sanitize and Prepare Data ---
     $firstName = $data['firstName'] ?? '';
     $lastName = $data['lastName'] ?? '';
@@ -50,6 +47,40 @@ try {
     $phone = $data['phone'] ?? '';
     $ageGroup = $data['ageGroup'] ?? '';
     $groupSize = $data['groupSize'] ?? '';
+
+    // Validate required fields
+    if (empty($firstName) || empty($lastName) || empty($email)) {
+        throw new Exception("First name, last name, and email are required.");
+    }
+
+    // --- Check if user already exists ---
+    $checkStmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+    if ($checkStmt === false) {
+        throw new Exception("Failed to prepare check statement: " . $conn->error);
+    }
+
+    $checkStmt->bind_param("s", $email);
+    $checkStmt->execute();
+    $result = $checkStmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // User already exists
+        $checkStmt->close();
+        $conn->close();
+        
+        http_response_code(409); // Conflict - user already exists
+        echo json_encode([
+            "success" => false,
+            "error_code" => "USER_EXISTS",
+            "message" => "An account with this email already exists. Please log in instead."
+        ]);
+        exit;
+    }
+
+    $checkStmt->close();
+
+    // --- Securely Hash the Password ---
+    $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
     // Convert boolean values to integers (1 for true, 0 for false)
     $newsletter = isset($data['newsletter']) && $data['newsletter'] ? 1 : 0;
@@ -60,11 +91,6 @@ try {
     $completionData = $data['completionData'] ?? [];
     $totalTime = $completionData['totalTime'] ?? 0; // Stored in milliseconds
     $formattedTime = $completionData['formattedTime'] ?? '00:00:00';
-
-    // Validate required fields
-    if (empty($firstName) || empty($lastName) || empty($email)) {
-        throw new Exception("First name, last name, and email are required.");
-    }
 
     // --- SQL Execution ---
     // Prepare an SQL statement to prevent SQL injection
