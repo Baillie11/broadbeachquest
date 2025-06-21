@@ -93,7 +93,7 @@ $medalData = [
             font-weight: 600;
         }
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 2em auto;
             padding: 1em;
         }
@@ -110,19 +110,35 @@ $medalData = [
         }
         .content-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 2em;
+            margin-bottom: 2em;
         }
-        .main-content, .sidebar {
+        .leaderboard-section {
             background: #fff;
             padding: 2em;
             border-radius: 15px;
             box-shadow: 0 4px 25px rgba(0,0,0,0.05);
         }
+        .medals-section {
+            background: #fff;
+            padding: 2em;
+            border-radius: 15px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+            grid-column: 1 / -1;
+        }
         h2 {
             border-bottom: 3px solid #f4f8fb;
             padding-bottom: 0.5em;
             margin-top: 0;
+        }
+        .speed-leaderboard h2 {
+            color: #ff6b35;
+            border-bottom-color: #ff6b35;
+        }
+        .medal-leaderboard h2 {
+            color: #6a82fb;
+            border-bottom-color: #6a82fb;
         }
 
         /* Medal Styles */
@@ -194,15 +210,6 @@ $medalData = [
             margin-bottom: 1em;
         }
 
-        @media (max-width: 768px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-            .medals-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         /* Leaderboard Styles */
         .leaderboard-item {
             display: flex;
@@ -241,6 +248,20 @@ $medalData = [
             font-size: 0.8em;
             font-weight: bold;
         }
+        .completion-time {
+            background: #ff6b35;
+            color: white;
+            padding: 0.3em 0.6em;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            font-family: monospace;
+        }
+        .completion-date {
+            font-size: 0.7em;
+            color: #666;
+            margin-top: 0.2em;
+        }
         .loading {
             text-align: center;
             padding: 2em;
@@ -250,6 +271,15 @@ $medalData = [
             text-align: center;
             padding: 2em;
             color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .medals-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -265,50 +295,94 @@ $medalData = [
     <div class="container">
         <div class="welcome-banner">
             <h1>Welcome back, <?php echo htmlspecialchars($firstName); ?>!</h1>
-            <p>Here are your earned medals and the current quest leaderboard.</p>
+            <p>Check out the fastest quest hunters and your earned medals.</p>
         </div>
 
         <div class="content-grid">
-            <div class="main-content">
-                <h2>Your Medals</h2>
-                <?php if (empty($medals)): ?>
-                    <div class="no-medals">
-                        <img src="puzzlepath-logo-web.png" alt="No medals yet">
-                        <h3>No medals yet!</h3>
-                        <p>Complete quests to earn your first medal.</p>
-                        <a href="index.html" style="display: inline-block; background: #fc5c7d; color: white; padding: 0.8em 1.5em; text-decoration: none; border-radius: 8px; margin-top: 1em;">Start a Quest</a>
-                    </div>
-                <?php else: ?>
-                    <div class="medals-grid">
-                        <?php foreach ($medalData as $medalKey => $medal): ?>
-                            <div class="medal-card <?php echo in_array($medalKey, $medals) ? 'earned' : ''; ?>">
-                                <div class="medal-image">
-                                    <?php if (in_array($medalKey, $medals) && isset($medal['image'])): ?>
-                                        <img src="<?php echo htmlspecialchars($medal['image']); ?>" alt="<?php echo htmlspecialchars($medal['name']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-                                    <?php else: ?>
-                                        🏅
-                                    <?php endif; ?>
-                                </div>
-                                <div class="medal-name"><?php echo htmlspecialchars($medal['name']); ?></div>
-                                <div class="medal-description"><?php echo htmlspecialchars($medal['description']); ?></div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-            <div class="sidebar">
-                <h2>Leaderboard</h2>
-                <div id="leaderboardContainer">
-                    <div class="loading">Loading leaderboard...</div>
+            <div class="leaderboard-section speed-leaderboard">
+                <h2>🏃‍♂️ Fastest Broadbeach Quest Hunters</h2>
+                <div id="speedLeaderboardContainer">
+                    <div class="loading">Loading speed leaderboard...</div>
                 </div>
             </div>
+            
+            <div class="leaderboard-section medal-leaderboard">
+                <h2>🏆 Medal Champions</h2>
+                <div id="medalLeaderboardContainer">
+                    <div class="loading">Loading medal leaderboard...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="medals-section">
+            <h2>Your Medals</h2>
+            <?php if (empty($medals)): ?>
+                <div class="no-medals">
+                    <img src="puzzlepath-logo-web.png" alt="No medals yet">
+                    <h3>No medals yet!</h3>
+                    <p>Complete quests to earn your first medal.</p>
+                    <a href="index.html" style="display: inline-block; background: #fc5c7d; color: white; padding: 0.8em 1.5em; text-decoration: none; border-radius: 8px; margin-top: 1em;">Start a Quest</a>
+                </div>
+            <?php else: ?>
+                <div class="medals-grid">
+                    <?php foreach ($medalData as $medalKey => $medal): ?>
+                        <div class="medal-card <?php echo in_array($medalKey, $medals) ? 'earned' : ''; ?>">
+                            <div class="medal-image">
+                                <?php if (in_array($medalKey, $medals) && isset($medal['image'])): ?>
+                                    <img src="<?php echo htmlspecialchars($medal['image']); ?>" alt="<?php echo htmlspecialchars($medal['name']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                <?php else: ?>
+                                    🏅
+                                <?php endif; ?>
+                            </div>
+                            <div class="medal-name"><?php echo htmlspecialchars($medal['name']); ?></div>
+                            <div class="medal-description"><?php echo htmlspecialchars($medal['description']); ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
     <script>
-        // Load leaderboard data
-        async function loadLeaderboard() {
-            const container = document.getElementById('leaderboardContainer');
+        // Load speed leaderboard data
+        async function loadSpeedLeaderboard() {
+            const container = document.getElementById('speedLeaderboardContainer');
+            
+            try {
+                const response = await fetch('speed-leaderboard.php');
+                const data = await response.json();
+                
+                if (data.success && data.leaderboard.length > 0) {
+                    let html = '';
+                    data.leaderboard.forEach((user, index) => {
+                        const rank = index + 1;
+                        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                        const isCurrentUser = user.name.includes('<?php echo htmlspecialchars($firstName); ?>');
+                        
+                        html += `
+                            <div class="leaderboard-item ${isCurrentUser ? 'current-user' : ''}">
+                                <div class="rank ${rankClass}">#${rank}</div>
+                                <div class="user-name">
+                                    ${user.name}
+                                    <div class="completion-date">${user.date}</div>
+                                </div>
+                                <div class="completion-time">${user.time}</div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="no-data">No speed records yet. Be the first!</div>';
+                }
+            } catch (error) {
+                console.error('Error loading speed leaderboard:', error);
+                container.innerHTML = '<div class="no-data">Error loading speed leaderboard.</div>';
+            }
+        }
+
+        // Load medal leaderboard data
+        async function loadMedalLeaderboard() {
+            const container = document.getElementById('medalLeaderboardContainer');
             
             try {
                 const response = await fetch('leaderboard.php');
@@ -331,16 +405,19 @@ $medalData = [
                     });
                     container.innerHTML = html;
                 } else {
-                    container.innerHTML = '<div class="no-data">No leaderboard data available yet.</div>';
+                    container.innerHTML = '<div class="no-data">No medal data available yet.</div>';
                 }
             } catch (error) {
-                console.error('Error loading leaderboard:', error);
-                container.innerHTML = '<div class="no-data">Error loading leaderboard.</div>';
+                console.error('Error loading medal leaderboard:', error);
+                container.innerHTML = '<div class="no-data">Error loading medal leaderboard.</div>';
             }
         }
 
-        // Load leaderboard when page loads
-        document.addEventListener('DOMContentLoaded', loadLeaderboard);
+        // Load both leaderboards when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSpeedLeaderboard();
+            loadMedalLeaderboard();
+        });
     </script>
 </body>
 </html> 
