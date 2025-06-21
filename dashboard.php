@@ -202,6 +202,55 @@ $medalData = [
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Leaderboard Styles */
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8em;
+            margin-bottom: 0.5em;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .leaderboard-item:hover {
+            background: #e9ecef;
+        }
+        .leaderboard-item.current-user {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffc107;
+        }
+        .rank {
+            font-weight: bold;
+            color: #fc5c7d;
+            min-width: 30px;
+        }
+        .rank.rank-1 { color: #ffd700; }
+        .rank.rank-2 { color: #c0c0c0; }
+        .rank.rank-3 { color: #cd7f32; }
+        .user-name {
+            flex: 1;
+            margin-left: 1em;
+        }
+        .medal-count {
+            background: #fc5c7d;
+            color: white;
+            padding: 0.3em 0.6em;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .loading {
+            text-align: center;
+            padding: 2em;
+            color: #666;
+        }
+        .no-data {
+            text-align: center;
+            padding: 2em;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -249,10 +298,49 @@ $medalData = [
             </div>
             <div class="sidebar">
                 <h2>Leaderboard</h2>
-                <!-- Leaderboard will go here -->
-                <p>The leaderboard is coming soon!</p>
+                <div id="leaderboardContainer">
+                    <div class="loading">Loading leaderboard...</div>
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Load leaderboard data
+        async function loadLeaderboard() {
+            const container = document.getElementById('leaderboardContainer');
+            
+            try {
+                const response = await fetch('leaderboard.php');
+                const data = await response.json();
+                
+                if (data.success && data.leaderboard.length > 0) {
+                    let html = '';
+                    data.leaderboard.forEach((user, index) => {
+                        const rank = index + 1;
+                        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                        const isCurrentUser = user.name.includes('<?php echo htmlspecialchars($firstName); ?>');
+                        
+                        html += `
+                            <div class="leaderboard-item ${isCurrentUser ? 'current-user' : ''}">
+                                <div class="rank ${rankClass}">#${rank}</div>
+                                <div class="user-name">${user.name}</div>
+                                <div class="medal-count">${user.medal_count} medal${user.medal_count !== 1 ? 's' : ''}</div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="no-data">No leaderboard data available yet.</div>';
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                container.innerHTML = '<div class="no-data">Error loading leaderboard.</div>';
+            }
+        }
+
+        // Load leaderboard when page loads
+        document.addEventListener('DOMContentLoaded', loadLeaderboard);
+    </script>
 </body>
 </html> 
