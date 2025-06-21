@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Register for Your Medal - Broadbeach Quest</title>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1em;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 2em;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        .header img {
+            max-width: 120px;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            color: #4ca6a8;
+            font-size: 2em;
+            margin-bottom: 0.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 1.5em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4ca6a8;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            margin-bottom: 1.5em;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .submit-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 1em;
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .submit-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 0.5em;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1em;
+            border-radius: 10px;
+            text-align: center;
+            margin: 1em 0;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .completion-info {
+            background: #f8f9fa;
+            padding: 1em;
+            border-radius: 10px;
+            margin-bottom: 1.5em;
+            border-left: 4px solid #4ca6a8;
+        }
+
+        .completion-info h3 {
+            margin: 0 0 0.5em 0;
+            color: #4ca6a8;
+        }
+
+        .completion-info p {
+            margin: 0.5em 0;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1em 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4ca6a8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em;
+                margin: 1em;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="puzzlepath-logo-web.png" alt="Puzzle Path Logo">
+            <h1>Claim Your Medal!</h1>
+            <p class="subtitle">Complete your registration to unlock your Broadbeach Quest medal</p>
+        </div>
+
+        <div class="completion-info" id="completionInfo">
+            <h3>🎉 Quest Completed!</h3>
+            <p><strong>Completion Time:</strong> <span id="completionTime">--:--:--</span></p>
+            <p><strong>Completed On:</strong> <span id="completionDate">--</span></p>
+        </div>
+
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="firstName">First Name <span class="required">*</span></label>
+                <input type="text" id="firstName" name="firstName" required>
+                <div class="error" id="firstNameError">Please enter your first name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Last Name <span class="required">*</span></label>
+                <input type="text" id="lastName" name="lastName" required>
+                <div class="error" id="lastNameError">Please enter your last name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required>
+                <div class="error" id="emailError">Please enter a valid email address</div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+
+            <div class="form-group">
+                <label for="ageGroup">Age Group</label>
+                <select id="ageGroup" name="ageGroup">
+                    <option value="">Select age group</option>
+                    <option value="under-18">Under 18</option>
+                    <option value="18-25">18-25</option>
+                    <option value="26-35">26-35</option>
+                    <option value="36-45">36-45</option>
+                    <option value="46-55">46-55</option>
+                    <option value="56-65">56-65</option>
+                    <option value="over-65">Over 65</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="groupSize">How many people in your group?</label>
+                <select id="groupSize" name="groupSize">
+                    <option value="">Select group size</option>
+                    <option value="1">1 person (solo)</option>
+                    <option value="2">2 people</option>
+                    <option value="3">3 people</option>
+                    <option value="4">4 people</option>
+                    <option value="5">5 people</option>
+                    <option value="6+">6+ people</option>
+                </select>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="newsletter" name="newsletter" checked>
+                <label for="newsletter">Subscribe to our newsletter for new quests and updates</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="marketing" name="marketing" checked>
+                <label for="marketing">I agree to receive marketing communications about future quests</label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">🏆 Claim My Medal</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Saving your registration...</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <h3>✅ Registration Complete!</h3>
+            <p>Redirecting you to your medal...</p>
+        </div>
+    </div>
+
+    <script>
+        // Load completion data from sessionStorage
+        window.onload = function() {
+            const completionData = sessionStorage.getItem('questCompletion');
+            if (completionData) {
+                const data = JSON.parse(completionData);
+                document.getElementById('completionTime').textContent = data.formattedTime;
+                
+                const completionDate = new Date(data.completionDate);
+                document.getElementById('completionDate').textContent = 
+                    completionDate.toLocaleDateString() + ' ' + completionDate.toLocaleTimeString();
+            } else {
+                // If no completion data, redirect back to quest
+                window.location.href = 'index.html';
+            }
+        };
+
+        // Form validation and submission
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Reset errors
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+            
+            let isValid = true;
+            
+            // Validate required fields
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!firstName) {
+                document.getElementById('firstNameError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!lastName) {
+                document.getElementById('lastNameError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!email || !isValidEmail(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Collect form data
+                const formData = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phone: document.getElementById('phone').value.trim(),
+                    ageGroup: document.getElementById('ageGroup').value,
+                    groupSize: document.getElementById('groupSize').value,
+                    newsletter: document.getElementById('newsletter').checked,
+                    marketing: document.getElementById('marketing').checked,
+                    completionData: JSON.parse(sessionStorage.getItem('questCompletion')),
+                    registrationDate: new Date().toISOString()
+                };
+                
+                // For now, we'll just log to console
+                console.log('Registration data collected:', formData);
+                
+                // Show success message
+                document.getElementById('registrationForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // Redirect to medal page after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'medal.html';
+                }, 2000);
+            }
+        });
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
+</body>
+</html> 

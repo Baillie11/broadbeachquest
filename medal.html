@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>🏆 Quest Completed - Digital Medal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 2em;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .celebration {
+            font-size: 4em;
+            margin-bottom: 0.5em;
+        }
+
+        h1 {
+            color: #4ca6a8;
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .completion-stats {
+            background: #f8f9fa;
+            padding: 1.5em;
+            border-radius: 15px;
+            margin: 1.5em 0;
+            border-left: 5px solid #4ca6a8;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5em 0;
+            font-size: 1.1em;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #4ca6a8;
+        }
+
+        .medal-container {
+            margin: 2em 0;
+            padding: 2em;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            position: relative;
+        }
+
+        .medal {
+            font-size: 5em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 1em 0.5em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .new-quest-btn {
+            background: #ff9800;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 1em 0.5em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .new-quest-btn:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .home-btn {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 1em 0.5em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .home-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .quest-links {
+            margin-top: 2em;
+            padding: 1.5em;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .quest-links h3 {
+            color: #4ca6a8;
+            margin-bottom: 1em;
+        }
+
+        .quest-link {
+            display: block;
+            background: white;
+            padding: 1em;
+            margin: 0.5em 0;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .quest-link:hover {
+            border-color: #4ca6a8;
+            transform: translateX(5px);
+        }
+
+        .quest-link h4 {
+            margin: 0 0 0.5em 0;
+            color: #4ca6a8;
+        }
+
+        .quest-link p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1em;
+                padding: 1.5em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .medal-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .medal {
+                font-size: 4em;
+            }
+            
+            .download-btn, .new-quest-btn {
+                display: block;
+                width: 100%;
+                margin: 0.5em 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="celebration">🎉</div>
+        <h1>Quest Completed!</h1>
+        <p>Congratulations! You've successfully completed the Broadbeach Quest and earned your digital medal.</p>
+        
+        <div class="completion-stats">
+            <div class="stat">
+                <span>Completion Time:</span>
+                <span class="stat-value" id="completionTime">--:--:--</span>
+            </div>
+            <div class="stat">
+                <span>Completed On:</span>
+                <span class="stat-value" id="completionDate">--</span>
+            </div>
+            <div class="stat">
+                <span>Quest:</span>
+                <span class="stat-value">Broadbeach Quest</span>
+            </div>
+        </div>
+
+        <div class="medal-container">
+            <img src="Broadbeach Medal.png" alt="Broadbeach Quest Medal" class="medal" style="max-width: 100%; height: auto;">
+        </div>
+
+        <div>
+            <button class="download-btn" onclick="downloadMedal()">📥 Download Medal</button>
+            <button class="new-quest-btn" onclick="showNewQuests()">🚀 New Quests</button>
+        </div>
+
+        <div class="quest-links" id="questLinks" style="display: none;">
+            <h3>Available Quests</h3>
+            <a href="#" class="quest-link">
+                <h4>🌊 Surfers Paradise Adventure</h4>
+                <p>Explore the iconic Surfers Paradise with 8 exciting challenges</p>
+            </a>
+            <a href="#" class="quest-link">
+                <h4>🌿 Burleigh Heads Nature Trail</h4>
+                <p>Discover the natural beauty of Burleigh Heads National Park</p>
+            </a>
+            <a href="#" class="quest-link">
+                <h4>🏛️ Gold Coast Cultural Quest</h4>
+                <p>Immerse yourself in the arts and culture of the Gold Coast</p>
+            </a>
+            <a href="#" class="quest-link">
+                <h4>🍽️ Foodie's Paradise Tour</h4>
+                <p>Taste your way through the best local restaurants and cafes</p>
+            </a>
+        </div>
+
+        <div style="margin-top: 2em;">
+            <a href="index.html" class="home-btn">🏠 Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Load completion data from sessionStorage
+        window.onload = function() {
+            const completionData = sessionStorage.getItem('questCompletion');
+            if (completionData) {
+                const data = JSON.parse(completionData);
+                document.getElementById('completionTime').textContent = data.formattedTime;
+                
+                const completionDate = new Date(data.completionDate);
+                document.getElementById('completionDate').textContent = 
+                    completionDate.toLocaleDateString() + ' ' + completionDate.toLocaleTimeString();
+            }
+        };
+
+        function downloadMedal() {
+            // Create a link to download the custom medal image
+            const link = document.createElement('a');
+            link.download = 'broadbeach-quest-medal.png';
+            link.href = 'Broadbeach Medal.png';
+            link.click();
+        }
+
+        function showNewQuests() {
+            const questLinks = document.getElementById('questLinks');
+            if (questLinks.style.display === 'none') {
+                questLinks.style.display = 'block';
+                // Smooth scroll to quest links
+                questLinks.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                questLinks.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

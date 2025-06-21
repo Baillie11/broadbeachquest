@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Broadbeach Quest</title>
+<style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f4f8fb;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 1em;
+    }
+
+    .intro-banner {
+      background: #fdeaa8;
+      color: #333;
+      text-align: center;
+      padding: 1.5em;
+      border-radius: 10px;
+      margin-bottom: 1em;
+    }
+    
+    .intro-banner img {
+      display: block;
+      margin: auto;
+      max-width: 120px;
+      margin-bottom: 0.5em;
+    }
+    
+    .intro-banner h1 {
+      font-size: 1.8em;
+      margin: 0.5em 0;
+      color: #333;
+    }
+    
+    .intro-banner p {
+      font-size: 1em;
+      margin: 0;
+      color: #333;
+    }
+
+    .start-button {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 18px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .start-button:hover {
+      background: #45a049;
+    }
+
+    .start-button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .finish-button {
+      background: #ff9800;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 18px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .finish-button:hover {
+      background: #e68900;
+    }
+
+    .finish-button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .timer {
+      background: white;
+      padding: 1em;
+      border-radius: 10px;
+      text-align: center;
+      margin: 1em 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #4ca6a8;
+    }
+    
+    .clue {
+      background: white;
+      margin: 1em 0;
+      padding: 1em;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(253, 234, 168, 0.8);
+      text-align: center;
+    }
+    
+    .task, .hint {
+      display: none;
+      margin-top: 0.5em;
+      padding: 0.5em;
+      background: #fff3cd;
+      text-align: center;
+    }
+    
+    .buttons {
+      margin-top: 0.5em;
+    }
+    
+    button {
+      background: #4ca6a8;
+      border: none;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 0.5em;
+      padding: 0.4em 0.8em;
+      font-size: 0.9em;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background: #3a8a8c;
+    }
+    
+    .hidden {
+      display: none;
+    }
+
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 1em;
+      border-radius: 10px;
+      text-align: center;
+      margin: 1em 0;
+      border: 1px solid #c3e6cb;
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0.5em;
+        max-width: 100%;
+      }
+      
+      .intro-banner h1 {
+        font-size: 1.5em;
+      }
+      
+      .intro-banner img {
+        max-width: 100px;
+      }
+      
+      .clue {
+        margin: 0.5em 0;
+        padding: 0.8em;
+      }
+      
+      button {
+        display: block;
+        width: 100%;
+        margin: 0.3em 0;
+        padding: 0.6em;
+        font-size: 1em;
+      }
+      
+      .buttons {
+        margin-top: 0.8em;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .intro-banner h1 {
+        font-size: 1.3em;
+      }
+      
+      .intro-banner p {
+        font-size: 0.9em;
+      }
+      
+      .clue {
+        padding: 0.6em;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+<div class="intro-banner">
+<img alt="Puzzle Path Logo" src="puzzlepath-logo-web.png"/>
+<h1>Broadbeach Quest</h1>
+<p>Start at the All Abilities Playground and follow the path clockwise around the lake.</p>
+<button class="start-button" id="startButton" onclick="startQuest()">🚀 Start Your Quest!</button>
+</div>
+</div>
+
+<div class="container" id="timerContainer" style="display: none;">
+  <div class="timer" id="timer">Time: 00:00:00</div>
+</div>
+
+<div class="container" id="clueContainer"></div>
+
+<div class="container" id="finishContainer" style="display: none; text-align: center;">
+  <button class="finish-button" id="finishButton" onclick="finishQuest()" disabled>🏁 Complete Quest!</button>
+</div>
+
+<script>
+    let startTime = null;
+    let timerInterval = null;
+    let completedClues = 0;
+    const totalClues = 6;
+
+    const clues = [
+  {
+    title: "Clue 1: Sound & Sand",
+    clue: "Where music meets the sand and grass,\nA stage stands proud where events do pass.\nFace the sea, your journey's begun —\nFind the shell that captures sound and sun.",
+    task: "Form a 'band' using air instruments and take a group photo on the amphitheatre stage.",
+    hint: "It's shaped like a shell and often hosts music or markets.",
+    answer: "Kurrawa Park Amphitheatre"
+  },
+  {
+    title: "Clue 2: A Golden Stroll",
+    clue: "Walk the path where runners glide,\nBeside the beach, the ocean's tide.\nFind the exercise zone where you can flex —\nIt's part of fitness, not just for pecs.",
+    task: "Pick one group member to demonstrate a piece of equipment while others cheer like it's the Olympics.",
+    hint: "It's free, public, and often used by beachgoers.",
+    answer: "Outdoor gym equipment area near Old Burleigh Rd"
+  },
+  {
+    title: "Clue 3: Tall and Timely",
+    clue: "A tower of time with a golden hue,\nIt marks the spot with a coastal view.\nCount its stories from base to sky,\nThen turn west and wave goodbye.",
+    task: "Snap a group photo with the clock in the background, mid 'freeze-frame' like you're caught in time.",
+    hint: "It's a tribute to timekeeping, not a hotel.",
+    answer: "Broadbeach Clock Tower"
+  },
+  {
+    title: "Clue 4: Literary Escape",
+    clue: "Not far from sand, in shade and peace,\nA place for books where whispers cease.\nChairs, not waves, are where you'll dwell,\nFind the tales you know so well.",
+    task: "Each team member must find a book that starts with the same letter as their first name and pose like a character from the cover.",
+    hint: "It's quiet, cool, and full of shelves.",
+    answer: "Broadbeach Library"
+  },
+  {
+    title: "Clue 5: Beneath the Arches",
+    clue: "Where arches glow as sunsets fall,\nThe foreshore welcomes one and all.\nReturn to waves and sandy floor,\nA photo near these lights is lore.",
+    task: "Take a creative group beach photo using the arch as a frame — bonus if everyone is jumping mid-air.",
+    hint: "The lights come on at dusk and shine bright at night.",
+    answer: "Kurrawa Arches"
+  },
+  {
+    title: "Clue 6: Memory Lane",
+    clue: "Final stop, near where you began,\nA playground built for every clan.\nLook for signs with plaques and dates,\nTime to tally and test your fates.",
+    task: "Find three plaques or signs with dates. Use them in a math equation (e.g., oldest year minus youngest participant's age) and submit your answer to unlock the medal.",
+    hint: "You passed it at the start. It's where fun and inclusivity meet.",
+    answer: "Pratten Park All Abilities Playground"
+  }
+];
+
+    const container = document.getElementById("clueContainer");
+
+    // Create all clues but keep them hidden initially
+    clues.forEach((c, i) => {
+      const el = document.createElement("div");
+      el.className = "clue";
+      el.style.display = "none"; // Hide all clues initially
+      el.innerHTML = `
+        <h3>${c.title}</h3>
+        <p>${c.clue.replace(/\n/g, '<br>')}</p>
+        <div class="buttons">
+          <button onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">Show Task</button>
+          <div class="task">${c.task}</div>
+        </div>
+        <div class="buttons">
+          <button onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">Need a Hint?</button>
+          <div class="hint">${c.hint}</div>
+        </div>
+        <div class="buttons">
+          <label><input type="checkbox" onchange="completeClue(${i})"> Done – show next clue</label>
+        </div>
+      `;
+      el.id = `clue-${i}`;
+      container.appendChild(el);
+    });
+
+    function startQuest() {
+      startTime = new Date();
+      
+      // Hide start button
+      document.getElementById('startButton').style.display = 'none';
+      
+      // Show first clue
+      document.getElementById('clue-0').style.display = 'block';
+      
+      // Start timer (but don't display it)
+      startTimer();
+      
+      // Send start time to server
+      sendToServer('start', {
+        startTime: startTime.toISOString(),
+        timestamp: Date.now()
+      });
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        const now = new Date();
+        const diff = now - startTime;
+        const hours = Math.floor(diff / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        
+        // Timer still runs but doesn't update display
+        // You can access the current time via: formatTime(diff)
+      }, 1000);
+    }
+
+    function completeClue(index) {
+      completedClues++;
+      
+      // Show next clue if not the last one
+      if (index < clues.length - 1) {
+        document.getElementById(`clue-${index + 1}`).style.display = 'block';
+      }
+      
+      // If all clues are completed, show finish button
+      if (completedClues === totalClues) {
+        document.getElementById('finishContainer').style.display = 'block';
+        document.getElementById('finishButton').disabled = false;
+      }
+    }
+
+    function finishQuest() {
+      const endTime = new Date();
+      const totalTime = endTime - startTime;
+      
+      // Stop timer
+      clearInterval(timerInterval);
+      
+      // Send completion data to server
+      sendToServer('finish', {
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        totalTime: totalTime,
+        timestamp: Date.now()
+      });
+      
+      // Redirect to registration page with completion data
+      const completionData = {
+        totalTime: totalTime,
+        formattedTime: formatTime(totalTime),
+        completionDate: endTime.toISOString()
+      };
+      
+      // Store completion data in sessionStorage for the registration page
+      sessionStorage.setItem('questCompletion', JSON.stringify(completionData));
+      
+      // Redirect to registration page
+      window.location.href = 'register.html';
+    }
+
+    function formatTime(milliseconds) {
+      const hours = Math.floor(milliseconds / 3600000);
+      const minutes = Math.floor((milliseconds % 3600000) / 60000);
+      const seconds = Math.floor((milliseconds % 60000) / 1000);
+      
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Function to send data to server - customize this for your backend
+    function sendToServer(action, data) {
+      // Example implementation - replace with your actual server endpoint
+      const serverData = {
+        action: action,
+        ...data,
+        userAgent: navigator.userAgent,
+        screenResolution: `${screen.width}x${screen.height}`
+      };
+      
+      console.log('Sending to server:', serverData);
+      
+      // Example: Send to your server endpoint
+      // fetch('/api/quest-tracking', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(serverData)
+      // })
+      // .then(response => response.json())
+      // .then(data => console.log('Success:', data))
+      // .catch((error) => console.error('Error:', error));
+      
+      // For now, we'll just log to console
+      // Replace the above commented code with your actual server implementation
+    }
+  </script>
+</body>
+</html>
+
