@@ -220,6 +220,18 @@
             </div>
 
             <div class="form-group">
+                <label for="password">Password <span class="required">*</span></label>
+                <input type="password" id="password" name="password" required>
+                <div class="error" id="passwordError">Password is required</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <div class="error" id="confirmPasswordError">Passwords do not match</div>
+            </div>
+
+            <div class="form-group">
                 <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" name="phone">
             </div>
@@ -293,7 +305,7 @@
         };
 
         // Form validation and submission
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Reset errors
@@ -320,33 +332,69 @@
                 document.getElementById('emailError').style.display = 'block';
                 isValid = false;
             }
+
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!password) {
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                isValid = false;
+            }
             
             if (isValid) {
+                document.getElementById('registrationForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('successMessage').innerHTML = '<h3>Saving your details...</h3>';
+
                 // Collect form data
                 const formData = {
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
+                    password: password,
                     phone: document.getElementById('phone').value.trim(),
                     ageGroup: document.getElementById('ageGroup').value,
                     groupSize: document.getElementById('groupSize').value,
                     newsletter: document.getElementById('newsletter').checked,
                     marketing: document.getElementById('marketing').checked,
-                    completionData: JSON.parse(sessionStorage.getItem('questCompletion')),
-                    registrationDate: new Date().toISOString()
+                    completionData: JSON.parse(sessionStorage.getItem('questCompletion'))
                 };
-                
-                // For now, we'll just log to console
-                console.log('Registration data collected:', formData);
-                
-                // Show success message
-                document.getElementById('registrationForm').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-                
-                // Redirect to medal page after 2 seconds
-                setTimeout(() => {
-                    window.location.href = 'medal.html';
-                }, 2000);
+
+                try {
+                    const response = await fetch('register.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData),
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Server responded with ${response.status}: ${errorText}`);
+                    }
+
+                    // Handle success
+                    document.getElementById('successMessage').innerHTML = `
+                        <h3>✅ Registration Complete!</h3>
+                        <p>Redirecting you to your medal...</p>`;
+                    
+                    setTimeout(() => {
+                        window.location.href = 'medal.html';
+                    }, 2000);
+
+                } catch (error) {
+                    // Handle failure
+                    console.error('Submission failed:', error);
+                    document.getElementById('successMessage').style.display = 'none';
+                    document.getElementById('registrationForm').style.display = 'block';
+                    alert('There was an error saving your details. Please try again. ' + error.message);
+                }
             }
         });
 
