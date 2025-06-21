@@ -174,6 +174,78 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Tab styles for registration/login toggle */
+        .tab-container {
+            margin-bottom: 2em;
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 0.3em;
+            margin-bottom: 1.5em;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 0.8em 1em;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: #4ca6a8;
+            color: white;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Login form specific styles */
+        .login-form .form-group {
+            margin-bottom: 1.2em;
+        }
+
+        .login-form .submit-btn {
+            background: #4ca6a8;
+        }
+
+        .login-form .submit-btn:hover {
+            background: #3a8a8c;
+        }
+
+        .switch-text {
+            text-align: center;
+            margin-top: 1.5em;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .switch-text a {
+            color: #4ca6a8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .switch-text a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1.5em;
@@ -200,81 +272,115 @@
             <p><strong>Completed On:</strong> <span id="completionDate">--</span></p>
         </div>
 
-        <form id="registrationForm">
-            <div class="form-group">
-                <label for="firstName">First Name <span class="required">*</span></label>
-                <input type="text" id="firstName" name="firstName" required>
-                <div class="error" id="firstNameError">Please enter your first name</div>
+        <!-- Tab Container -->
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="switchTab('register')">New User Registration</button>
+                <button class="tab-button" onclick="switchTab('login')">Existing User Login</button>
             </div>
 
-            <div class="form-group">
-                <label for="lastName">Last Name <span class="required">*</span></label>
-                <input type="text" id="lastName" name="lastName" required>
-                <div class="error" id="lastNameError">Please enter your last name</div>
+            <!-- Registration Tab -->
+            <div class="tab-content active" id="registerTab">
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                        <div class="error" id="firstNameError">Please enter your first name</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required>
+                        <div class="error" id="lastNameError">Please enter your last name</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error" id="emailError">Please enter a valid email address</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="error" id="passwordError">Password is required</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <div class="error" id="confirmPasswordError">Passwords do not match</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ageGroup">Age Group</label>
+                        <select id="ageGroup" name="ageGroup">
+                            <option value="">Select age group</option>
+                            <option value="under-18">Under 18</option>
+                            <option value="18-25">18-25</option>
+                            <option value="26-35">26-35</option>
+                            <option value="36-45">36-45</option>
+                            <option value="46-55">46-55</option>
+                            <option value="56-65">56-65</option>
+                            <option value="over-65">Over 65</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="groupSize">How many people in your group?</label>
+                        <select id="groupSize" name="groupSize">
+                            <option value="">Select group size</option>
+                            <option value="1">1 person (solo)</option>
+                            <option value="2">2 people</option>
+                            <option value="3">3 people</option>
+                            <option value="4">4 people</option>
+                            <option value="5">5 people</option>
+                            <option value="6+">6+ people</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="newsletter" name="newsletter" checked>
+                        <label for="newsletter">Subscribe to our newsletter for new quests and updates</label>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="marketing" name="marketing" checked>
+                        <label for="marketing">I agree to receive marketing communications about future quests</label>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">🏆 Claim My Medal</button>
+                </form>
             </div>
 
-            <div class="form-group">
-                <label for="email">Email Address <span class="required">*</span></label>
-                <input type="email" id="email" name="email" required>
-                <div class="error" id="emailError">Please enter a valid email address</div>
-            </div>
+            <!-- Login Tab -->
+            <div class="tab-content" id="loginTab">
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address <span class="required">*</span></label>
+                        <input type="email" id="loginEmail" name="email" required>
+                        <div class="error" id="loginEmailError">Please enter a valid email address</div>
+                    </div>
 
-            <div class="form-group">
-                <label for="password">Password <span class="required">*</span></label>
-                <input type="password" id="password" name="password" required>
-                <div class="error" id="passwordError">Password is required</div>
-            </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password <span class="required">*</span></label>
+                        <input type="password" id="loginPassword" name="password" required>
+                        <div class="error" id="loginPasswordError">Password is required</div>
+                    </div>
 
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
-                <div class="error" id="confirmPasswordError">Passwords do not match</div>
-            </div>
+                    <button type="submit" class="submit-btn" id="loginSubmitBtn">🔑 Login & Claim Medal</button>
+                </form>
 
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone">
+                <div class="switch-text">
+                    <p>Don't have an account? <a href="#" onclick="switchTab('register')">Register here</a></p>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="ageGroup">Age Group</label>
-                <select id="ageGroup" name="ageGroup">
-                    <option value="">Select age group</option>
-                    <option value="under-18">Under 18</option>
-                    <option value="18-25">18-25</option>
-                    <option value="26-35">26-35</option>
-                    <option value="36-45">36-45</option>
-                    <option value="46-55">46-55</option>
-                    <option value="56-65">56-65</option>
-                    <option value="over-65">Over 65</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="groupSize">How many people in your group?</label>
-                <select id="groupSize" name="groupSize">
-                    <option value="">Select group size</option>
-                    <option value="1">1 person (solo)</option>
-                    <option value="2">2 people</option>
-                    <option value="3">3 people</option>
-                    <option value="4">4 people</option>
-                    <option value="5">5 people</option>
-                    <option value="6+">6+ people</option>
-                </select>
-            </div>
-
-            <div class="checkbox-group">
-                <input type="checkbox" id="newsletter" name="newsletter" checked>
-                <label for="newsletter">Subscribe to our newsletter for new quests and updates</label>
-            </div>
-
-            <div class="checkbox-group">
-                <input type="checkbox" id="marketing" name="marketing" checked>
-                <label for="marketing">I agree to receive marketing communications about future quests</label>
-            </div>
-
-            <button type="submit" class="submit-btn" id="submitBtn">🏆 Claim My Medal</button>
-        </form>
+        </div>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
@@ -304,7 +410,23 @@
             }
         };
 
-        // Form validation and submission
+        // Tab switching function
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Reset forms and errors
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Registration form validation and submission
         document.getElementById('registrationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -394,6 +516,64 @@
                     document.getElementById('successMessage').style.display = 'none';
                     document.getElementById('registrationForm').style.display = 'block';
                     alert('There was an error saving your details. Please try again. ' + error.message);
+                }
+            }
+        });
+
+        // Login form validation and submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Reset errors
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+            
+            let isValid = true;
+            
+            // Validate required fields
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !isValidEmail(email)) {
+                document.getElementById('loginEmailError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!password) {
+                document.getElementById('loginPasswordError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                document.getElementById('loginSubmitBtn').disabled = true;
+                document.getElementById('loginSubmitBtn').textContent = 'Logging in...';
+
+                // Create FormData for login
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('password', password);
+
+                try {
+                    const response = await fetch('login.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Login successful - redirect to medal page
+                        window.location.href = 'medal.html';
+                    } else {
+                        // Show error message
+                        alert(result.message || 'Login failed. Please check your credentials.');
+                        document.getElementById('loginSubmitBtn').disabled = false;
+                        document.getElementById('loginSubmitBtn').textContent = '🔑 Login & Claim Medal';
+                    }
+                } catch (error) {
+                    console.error('Login failed:', error);
+                    alert('A network error occurred. Please try again.');
+                    document.getElementById('loginSubmitBtn').disabled = false;
+                    document.getElementById('loginSubmitBtn').textContent = '🔑 Login & Claim Medal';
                 }
             }
         });
